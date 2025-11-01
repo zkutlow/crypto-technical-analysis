@@ -133,7 +133,7 @@ class MarketDataProvider:
             # Cache the result
             self.cache[cache_key] = df
             
-            time.sleep(Config.REQUEST_DELAY)  # Rate limiting
+            time.sleep(2.0)  # Rate limiting - increased delay for CoinGecko free tier
             return df
             
         except requests.exceptions.RequestException as e:
