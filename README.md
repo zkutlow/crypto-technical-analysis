@@ -24,7 +24,7 @@ A Python application that connects to your Coinbase account and provides technic
 
 - Python 3.8 or higher
 - Coinbase account with crypto holdings
-- Coinbase API key and secret
+- Coinbase CDP (Cloud Developer Platform) API key
 
 ## Installation
 
@@ -53,23 +53,25 @@ cp env.template .env
 # Edit .env and add your Coinbase API credentials
 ```
 
-## Getting Your Coinbase API Credentials
+## Getting Your Coinbase CDP API Key
 
-1. Log in to [Coinbase](https://www.coinbase.com/)
-2. Go to Settings → API
-3. Click "New API Key"
-4. Select permissions:
-   - ✅ **wallet:accounts:read** (required to read your portfolio)
-   - ✅ **wallet:user:read** (optional, for account info)
-   - ❌ Do NOT enable trading permissions unless needed
-5. Click "Create" and save your API Key and API Secret
-6. Add both to your `.env` file
+1. Log in to [Coinbase Developer Portal](https://portal.cdp.coinbase.com/)
+2. Go to "API Keys" section
+3. Click "Create API Key"
+4. Give it a name (e.g., "Crypto Analysis")
+5. Select permissions - **only enable VIEW permissions**:
+   - ✅ **View** (required to read your portfolio)
+   - ❌ **DO NOT** enable Trade or Transfer permissions
+6. Click "Create & Download"
+7. Save the downloaded JSON file (e.g., `cdp_api_key.json`)
+8. Move the JSON file to a secure location (e.g., your project folder)
 
 **⚠️ Important Security Notes:**
-- Never share your API secret
-- Store it securely in the `.env` file (which is gitignored)
-- Only grant read permissions to the API key
-- You can always revoke and regenerate keys in Coinbase settings
+- The JSON file contains your private key - **never share it**
+- Store it securely and never commit it to git
+- Only grant VIEW permissions to the API key
+- You can always revoke keys in the CDP portal
+- The JSON file is only shown once - if you lose it, create a new key
 
 ## Usage
 
@@ -88,18 +90,22 @@ The application will:
 
 ## Configuration
 
-You can customize the analysis in the `.env` file:
+Edit the `.env` file and point it to your API key JSON file:
 
 ```bash
-# Coinbase API Configuration
-COINBASE_API_KEY=your_api_key_here
-COINBASE_API_SECRET=your_api_secret_here
+# Coinbase CDP API Configuration
+COINBASE_API_KEY_FILE=/Users/yourusername/crypto-technical-analysis/cdp_api_key.json
 
 # Analysis Preferences
 RSI_OVERSOLD=30          # RSI level for oversold condition
 RSI_OVERBOUGHT=70        # RSI level for overbought condition
 MIN_PORTFOLIO_VALUE=100  # Minimum USD value to analyze
 ```
+
+**Setup Steps:**
+1. Move your downloaded `cdp_api_key.json` (or similar name) to your project folder
+2. Create a `.env` file: `cp env.template .env`
+3. Edit `.env` and set `COINBASE_API_KEY_FILE` to the full path of your JSON file
 
 ## Understanding the Output
 
@@ -162,10 +168,11 @@ MIN_PORTFOLIO_VALUE=100  # Minimum USD value to analyze
 ## Troubleshooting
 
 ### "No holdings found"
-- Verify your Coinbase API key and secret are correct
+- Verify your `COINBASE_API_KEY_FILE` path is correct in `.env`
 - Make sure you have crypto assets in your Coinbase account (not just USD)
-- Check that your API key has `wallet:accounts:read` permission
-- Try regenerating your API credentials in Coinbase
+- Check that your API key has VIEW permissions enabled
+- Make sure the JSON file is valid and contains both `name` and `privateKey` fields
+- Try creating a new API key in the CDP portal
 
 ### "Insufficient data"
 - Some cryptocurrencies may not have enough historical data
@@ -177,7 +184,7 @@ MIN_PORTFOLIO_VALUE=100  # Minimum USD value to analyze
 
 ## API Data Sources
 
-- **Portfolio Data**: Coinbase API
+- **Portfolio Data**: Coinbase CDP (Cloud Developer Platform) API v3
 - **Market Data**: CoinGecko API (free, no API key required)
 
 ## Contributing
@@ -196,7 +203,7 @@ MIT License - See LICENSE file for details
 
 For issues or questions:
 1. Check the troubleshooting section
-2. Review [Coinbase API documentation](https://developers.coinbase.com/api/v2)
+2. Review [Coinbase CDP API documentation](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome)
 3. Open an issue on GitHub
 
 ---

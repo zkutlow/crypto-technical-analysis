@@ -45,9 +45,9 @@ if [ ! -f .env ]; then
     echo ""
     echo "📝 Creating .env configuration file..."
     cat > .env << 'EOF'
-# Coinbase API Configuration
-COINBASE_API_KEY=your_coinbase_api_key_here
-COINBASE_API_SECRET=your_coinbase_api_secret_here
+# Coinbase CDP API Configuration
+# Path to your Coinbase CDP API key JSON file (downloaded from Coinbase)
+COINBASE_API_KEY_FILE=/path/to/your/cdp_api_key.json
 
 # Analysis Preferences
 RSI_OVERSOLD=30
@@ -56,9 +56,11 @@ MIN_PORTFOLIO_VALUE=100
 EOF
     echo "✓ Created .env file"
     echo ""
-    echo "⚠️  IMPORTANT: Edit the .env file and add your Coinbase API credentials!"
-    echo "   Get your API key and secret from: https://www.coinbase.com/settings/api"
-    echo "   Required permissions: wallet:accounts:read"
+    echo "⚠️  IMPORTANT Setup Steps:"
+    echo "   1. Get your Coinbase CDP API key from: https://portal.cdp.coinbase.com/"
+    echo "   2. Download the JSON file and move it to this folder"
+    echo "   3. Edit .env and set COINBASE_API_KEY_FILE to the full path of your JSON file"
+    echo "   4. Only enable VIEW permissions when creating the API key"
 else
     echo ""
     echo "✓ .env file already exists"
@@ -68,12 +70,14 @@ echo ""
 echo "✅ Setup complete!"
 echo ""
 echo "Next steps:"
-echo "1. Edit .env and add your Coinbase API key and secret"
-echo "   (Get them from: https://www.coinbase.com/settings/api)"
-echo "2. Activate the virtual environment:"
+echo "1. Get your Coinbase CDP API key (JSON file) from:"
+echo "   https://portal.cdp.coinbase.com/"
+echo "2. Move the JSON file to this project folder"
+echo "3. Edit .env and set COINBASE_API_KEY_FILE to the full path"
+echo "4. Activate the virtual environment:"
 echo "   source venv/bin/activate  (Linux/Mac)"
 echo "   venv\\Scripts\\activate     (Windows)"
-echo "3. Run the application:"
+echo "5. Run the application:"
 echo "   python main.py"
 echo ""
 
