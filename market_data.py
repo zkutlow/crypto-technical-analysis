@@ -162,6 +162,7 @@ class MarketDataProvider:
             response.raise_for_status()
             data = response.json()
             
+            time.sleep(1.0)  # Rate limiting
             return data.get(coin_id, {}).get('usd')
             
         except requests.exceptions.RequestException as e:
