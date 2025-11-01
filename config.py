@@ -10,9 +10,10 @@ load_dotenv()
 class Config:
     """Application configuration."""
     
-    # CoinTracker API
-    COINTRACKER_API_KEY = os.getenv('COINTRACKER_API_KEY', '')
-    COINTRACKER_BASE_URL = 'https://api.cointracker.io/api/v2'
+    # Coinbase API
+    COINBASE_API_KEY = os.getenv('COINBASE_API_KEY', '')
+    COINBASE_API_SECRET = os.getenv('COINBASE_API_SECRET', '')
+    COINBASE_BASE_URL = 'https://api.coinbase.com'
     
     # Technical Analysis Thresholds
     RSI_OVERSOLD = int(os.getenv('RSI_OVERSOLD', '30'))
@@ -30,10 +31,15 @@ class Config:
     @classmethod
     def validate(cls):
         """Validate required configuration."""
-        if not cls.COINTRACKER_API_KEY:
+        if not cls.COINBASE_API_KEY:
             raise ValueError(
-                "COINTRACKER_API_KEY not set. Please create a .env file "
-                "with your API key. See .env.example for reference."
+                "COINBASE_API_KEY not set. Please create a .env file "
+                "with your API key and secret. See env.template for reference."
+            )
+        if not cls.COINBASE_API_SECRET:
+            raise ValueError(
+                "COINBASE_API_SECRET not set. Please create a .env file "
+                "with your API key and secret. See env.template for reference."
             )
         return True
 

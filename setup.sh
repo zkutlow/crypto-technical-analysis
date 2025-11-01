@@ -45,8 +45,9 @@ if [ ! -f .env ]; then
     echo ""
     echo "📝 Creating .env configuration file..."
     cat > .env << 'EOF'
-# CoinTracker API Configuration
-COINTRACKER_API_KEY=your_cointracker_api_key_here
+# Coinbase API Configuration
+COINBASE_API_KEY=your_coinbase_api_key_here
+COINBASE_API_SECRET=your_coinbase_api_secret_here
 
 # Analysis Preferences
 RSI_OVERSOLD=30
@@ -55,8 +56,9 @@ MIN_PORTFOLIO_VALUE=100
 EOF
     echo "✓ Created .env file"
     echo ""
-    echo "⚠️  IMPORTANT: Edit the .env file and add your CoinTracker API key!"
-    echo "   Get your API key from: https://www.cointracker.io/settings/api"
+    echo "⚠️  IMPORTANT: Edit the .env file and add your Coinbase API credentials!"
+    echo "   Get your API key and secret from: https://www.coinbase.com/settings/api"
+    echo "   Required permissions: wallet:accounts:read"
 else
     echo ""
     echo "✓ .env file already exists"
@@ -66,7 +68,8 @@ echo ""
 echo "✅ Setup complete!"
 echo ""
 echo "Next steps:"
-echo "1. Edit .env and add your CoinTracker API key"
+echo "1. Edit .env and add your Coinbase API key and secret"
+echo "   (Get them from: https://www.coinbase.com/settings/api)"
 echo "2. Activate the virtual environment:"
 echo "   source venv/bin/activate  (Linux/Mac)"
 echo "   venv\\Scripts\\activate     (Windows)"

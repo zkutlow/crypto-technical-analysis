@@ -1,10 +1,10 @@
 # Crypto Technical Analysis Dashboard
 
-A Python application that connects to your CoinTracker portfolio and provides technical analysis with buy/sell/hold recommendations for your cryptocurrency holdings.
+A Python application that connects to your Coinbase account and provides technical analysis with buy/sell/hold recommendations for your cryptocurrency holdings.
 
 ## Features
 
-- 📊 **Portfolio Integration**: Automatically fetches your holdings from CoinTracker
+- 📊 **Portfolio Integration**: Automatically fetches your holdings from Coinbase
 - 📈 **Technical Analysis**: Calculates multiple indicators including:
   - RSI (Relative Strength Index)
   - MACD (Moving Average Convergence Divergence)
@@ -23,8 +23,8 @@ A Python application that connects to your CoinTracker portfolio and provides te
 ## Prerequisites
 
 - Python 3.8 or higher
-- CoinTracker account with API access
-- CoinTracker API key
+- Coinbase account with crypto holdings
+- Coinbase API key and secret
 
 ## Installation
 
@@ -48,18 +48,28 @@ pip install -r requirements.txt
 4. Set up your configuration:
 ```bash
 # Copy the example env file
-cp .env.example .env
+cp env.template .env
 
-# Edit .env and add your CoinTracker API key
-# You can get your API key from: https://www.cointracker.io/settings/api
+# Edit .env and add your Coinbase API credentials
 ```
 
-## Getting Your CoinTracker API Key
+## Getting Your Coinbase API Credentials
 
-1. Log in to [CoinTracker](https://www.cointracker.io/)
+1. Log in to [Coinbase](https://www.coinbase.com/)
 2. Go to Settings → API
-3. Generate a new API key
-4. Copy the key and add it to your `.env` file
+3. Click "New API Key"
+4. Select permissions:
+   - ✅ **wallet:accounts:read** (required to read your portfolio)
+   - ✅ **wallet:user:read** (optional, for account info)
+   - ❌ Do NOT enable trading permissions unless needed
+5. Click "Create" and save your API Key and API Secret
+6. Add both to your `.env` file
+
+**⚠️ Important Security Notes:**
+- Never share your API secret
+- Store it securely in the `.env` file (which is gitignored)
+- Only grant read permissions to the API key
+- You can always revoke and regenerate keys in Coinbase settings
 
 ## Usage
 
@@ -70,7 +80,7 @@ python main.py
 ```
 
 The application will:
-1. Fetch your portfolio from CoinTracker
+1. Fetch your portfolio from Coinbase
 2. Retrieve historical price data for each asset
 3. Perform technical analysis
 4. Generate recommendations with alerts
@@ -81,8 +91,9 @@ The application will:
 You can customize the analysis in the `.env` file:
 
 ```bash
-# CoinTracker API Configuration
-COINTRACKER_API_KEY=your_api_key_here
+# Coinbase API Configuration
+COINBASE_API_KEY=your_api_key_here
+COINBASE_API_SECRET=your_api_secret_here
 
 # Analysis Preferences
 RSI_OVERSOLD=30          # RSI level for oversold condition
@@ -151,9 +162,10 @@ MIN_PORTFOLIO_VALUE=100  # Minimum USD value to analyze
 ## Troubleshooting
 
 ### "No holdings found"
-- Verify your CoinTracker API key is correct
-- Make sure you have assets tracked in CoinTracker
-- Check that your API key has proper permissions
+- Verify your Coinbase API key and secret are correct
+- Make sure you have crypto assets in your Coinbase account (not just USD)
+- Check that your API key has `wallet:accounts:read` permission
+- Try regenerating your API credentials in Coinbase
 
 ### "Insufficient data"
 - Some cryptocurrencies may not have enough historical data
@@ -165,7 +177,7 @@ MIN_PORTFOLIO_VALUE=100  # Minimum USD value to analyze
 
 ## API Data Sources
 
-- **Portfolio Data**: CoinTracker API
+- **Portfolio Data**: Coinbase API
 - **Market Data**: CoinGecko API (free, no API key required)
 
 ## Contributing
@@ -184,7 +196,7 @@ MIT License - See LICENSE file for details
 
 For issues or questions:
 1. Check the troubleshooting section
-2. Review CoinTracker API documentation
+2. Review [Coinbase API documentation](https://developers.coinbase.com/api/v2)
 3. Open an issue on GitHub
 
 ---

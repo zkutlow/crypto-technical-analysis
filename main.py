@@ -7,7 +7,7 @@ from tabulate import tabulate
 from typing import List, Dict
 
 from config import Config
-from cointracker_client import CoinTrackerClient
+from coinbase_client import CoinbaseClient
 from market_data import MarketDataProvider
 from technical_analysis import TechnicalAnalyzer
 from recommendation_engine import RecommendationEngine, prioritize_recommendations
@@ -168,18 +168,18 @@ def main():
         Config.validate()
         
         print_header()
-        print(f"{Fore.CYAN}Fetching your portfolio from CoinTracker...{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}Fetching your portfolio from Coinbase...{Style.RESET_ALL}")
         
         # Initialize clients
-        cointracker = CoinTrackerClient()
+        coinbase = CoinbaseClient()
         market_data = MarketDataProvider()
         
         # Fetch holdings
-        holdings = cointracker.get_holdings()
+        holdings = coinbase.get_holdings()
         
         if not holdings:
-            print(f"\n{Fore.YELLOW}No holdings found in your CoinTracker portfolio.{Style.RESET_ALL}")
-            print("Please make sure you have assets tracked in CoinTracker.")
+            print(f"\n{Fore.YELLOW}No holdings found in your Coinbase account.{Style.RESET_ALL}")
+            print("Please make sure you have crypto assets in your Coinbase account.")
             return
         
         total_value = sum(h['value_usd'] for h in holdings)
