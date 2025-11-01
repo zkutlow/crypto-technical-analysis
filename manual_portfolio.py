@@ -10,6 +10,7 @@ from config import Config
 from market_data import MarketDataProvider
 from technical_analysis import TechnicalAnalyzer
 from recommendation_engine import RecommendationEngine, prioritize_recommendations
+from chart_generator import ChartGenerator
 
 
 # Initialize colorama
@@ -81,6 +82,44 @@ def display_recommendation(rec: Dict):
     conf_color = Fore.GREEN if rec['confidence'] == 'high' else Fore.YELLOW if rec['confidence'] == 'medium' else Fore.WHITE
     print(f"Confidence: {conf_color}{rec['confidence'].upper()}{Style.RESET_ALL}\n")
     
+    # Target Prices
+    if rec.get('targets'):
+        targets = rec['targets']
+        print(f"{Fore.CYAN}{Style.BRIGHT}🎯 TARGET PRICES:{Style.RESET_ALL}")
+        
+        if signal in ['strong_buy', 'buy']:
+            if targets.get('buy_target'):
+                print(f"  {Fore.GREEN}Buy Target:  ${targets['buy_target']:,.2f}{Style.RESET_ALL}")
+            if targets.get('sell_target'):
+                profit_pct = ((targets['sell_target'] - targets.get('buy_target', rec['current_price'])) / 
+                             targets.get('buy_target', rec['current_price']) * 100)
+                print(f"  {Fore.GREEN}Sell Target: ${targets['sell_target']:,.2f} (+{profit_pct:.1f}%){Style.RESET_ALL}")
+            if targets.get('stop_loss'):
+                loss_pct = ((targets['stop_loss'] - targets.get('buy_target', rec['current_price'])) / 
+                           targets.get('buy_target', rec['current_price']) * 100)
+                print(f"  {Fore.RED}Stop Loss:   ${targets['stop_loss']:,.2f} ({loss_pct:.1f}%){Style.RESET_ALL}")
+            if targets.get('risk_reward_ratio'):
+                rr = targets['risk_reward_ratio']
+                rr_color = Fore.GREEN if rr >= 2 else Fore.YELLOW if rr >= 1 else Fore.RED
+                print(f"  {rr_color}Risk/Reward:  {rr:.2f}:1{Style.RESET_ALL}")
+        
+        elif signal in ['strong_sell', 'sell']:
+            if targets.get('sell_target'):
+                print(f"  {Fore.RED}Sell Target: ${targets['sell_target']:,.2f}{Style.RESET_ALL}")
+            if targets.get('buy_target'):
+                reentry_pct = ((rec['current_price'] - targets['buy_target']) / rec['current_price'] * 100)
+                print(f"  {Fore.GREEN}Re-entry:    ${targets['buy_target']:,.2f} (-{reentry_pct:.1f}%){Style.RESET_ALL}")
+            if targets.get('stop_loss'):
+                print(f"  {Fore.RED}Stop Loss:   ${targets['stop_loss']:,.2f}{Style.RESET_ALL}")
+        
+        else:  # hold
+            if targets.get('buy_target'):
+                print(f"  {Fore.YELLOW}Support:     ${targets['buy_target']:,.2f}{Style.RESET_ALL}")
+            if targets.get('sell_target'):
+                print(f"  {Fore.YELLOW}Resistance:  ${targets['sell_target']:,.2f}{Style.RESET_ALL}")
+        
+        print()
+    
     # Alerts
     if rec.get('alerts'):
         print(f"{Fore.YELLOW}{Style.BRIGHT}🔔 ALERTS:{Style.RESET_ALL}")
@@ -94,6 +133,10 @@ def display_recommendation(rec: Dict):
         for reason in rec['reasons']:
             print(f"  {reason}")
         print()
+    
+    # Chart reference
+    if rec.get('chart_path'):
+        print(f"{Fore.CYAN}📊 Chart saved: {rec['chart_path']}{Style.RESET_ALL}\n")
 
 
 def display_all_recommendations(recommendations: List[Dict]):
@@ -224,6 +267,9 @@ def main():
         
         print(f"\n{Fore.CYAN}Analyzing {len(holdings)} asset(s)...{Style.RESET_ALL}\n")
         
+        # Initialize chart generator
+        chart_gen = ChartGenerator()
+        
         # Analyze each holding
         recommendations = []
         
@@ -249,6 +295,20 @@ def main():
             )
             
             recommendation = engine.generate_recommendation()
+            
+            # Generate chart
+            try:
+                chart_path = chart_gen.generate_technical_chart(
+                    symbol=symbol,
+                    price_data=recommendation['price_data'],
+                    indicators=recommendation['indicators'],
+                    target_prices=recommendation.get('targets')
+                )
+                recommendation['chart_path'] = chart_path
+            except Exception as e:
+                print(f"\n  Warning: Could not generate chart for {symbol}: {e}")
+                recommendation['chart_path'] = None
+            
             recommendations.append(recommendation)
             
             print(f"  [{i}/{len(holdings)}] {symbol} - {Fore.GREEN}✓ Complete{Style.RESET_ALL}        ")
@@ -266,6 +326,7 @@ def main():
         # Footer
         print(f"\n{Fore.CYAN}{'═' * 80}")
         print(f"Analysis complete! Found {len(recommendations)} recommendations.")
+        print(f"Charts saved in: ./charts/")
         print(f"{'═' * 80}{Style.RESET_ALL}\n")
         
         print(f"{Fore.YELLOW}⚠️  Disclaimer: This is for informational purposes only. "

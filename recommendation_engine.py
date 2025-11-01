@@ -2,6 +2,7 @@
 
 from typing import Dict, List, Tuple
 from technical_analysis import TechnicalAnalyzer
+from target_calculator import TargetPriceCalculator
 from config import Config
 
 
@@ -65,6 +66,10 @@ class RecommendationEngine:
         # Determine signal based on score
         signal, confidence = self._score_to_signal(score, len(reasons))
         
+        # Calculate target prices
+        target_calc = TargetPriceCalculator(self.analyzer.df, indicators)
+        targets = target_calc.calculate_targets(signal)
+        
         # Generate summary
         summary = self._generate_summary(signal, score, trends, momentum, volatility)
         
@@ -78,6 +83,9 @@ class RecommendationEngine:
             'summary': summary,
             'holding_value': self.holding_value,
             'current_price': indicators.get('price'),
+            'targets': targets,
+            'price_data': self.analyzer.df,  # For charting
+            'indicators': indicators,  # For charting
         }
     
     def _analyze_trends(self, trends: Dict) -> Tuple[int, List[str]]:

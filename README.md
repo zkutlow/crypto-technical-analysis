@@ -18,6 +18,18 @@ A Python application that connects to your Coinbase account and provides technic
   - Support/Resistance levels
   - Low volatility breakout potential
 - 💡 **Actionable Recommendations**: Provides clear buy/sell/hold signals with confidence levels
+- 🎯 **Target Price Calculations**: Automatically calculates:
+  - Buy/Sell target prices based on support/resistance
+  - Stop-loss levels using ATR
+  - Risk/reward ratios for each trade
+  - Re-entry points for bearish signals
+- 📊 **Visual Charts**: Generates comprehensive charts showing:
+  - Price action with moving averages
+  - Bollinger Bands overlay
+  - RSI indicator with overbought/oversold zones
+  - MACD histogram and signal lines
+  - Volume bars
+  - Target price levels marked on charts
 - 🎨 **Beautiful CLI**: Colorized output with organized tables and summaries
 
 ## Prerequisites
