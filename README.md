@@ -75,18 +75,37 @@ cp env.template .env
 
 ## Usage
 
-Run the application:
+### **Recommended: Manual Portfolio Input**
+
+The easiest way to use the app (no API keys needed):
+
+```bash
+# Activate virtual environment
+source venv/bin/activate
+
+# Run with your crypto symbols
+python manual_portfolio.py 'BTC,ETH,SOL,ADA'
+
+# Or run interactively and type them in
+python manual_portfolio.py
+```
+
+The application will:
+1. Accept your cryptocurrency symbols (BTC, ETH, SOL, etc.)
+2. Retrieve historical price data for each asset
+3. Perform technical analysis  
+4. Generate recommendations with alerts
+5. Display a comprehensive dashboard with actionable insights
+
+### **Alternative: Coinbase API (Advanced)**
+
+If you have a working Coinbase API setup:
 
 ```bash
 python main.py
 ```
 
-The application will:
-1. Fetch your portfolio from Coinbase
-2. Retrieve historical price data for each asset
-3. Perform technical analysis
-4. Generate recommendations with alerts
-5. Display a comprehensive dashboard with actionable insights
+**Note**: Coinbase's retail API has restricted programmatic access, so the manual input method is recommended for most users.
 
 ## Configuration
 
