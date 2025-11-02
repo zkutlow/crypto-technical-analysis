@@ -121,14 +121,18 @@ class MarketDataProvider:
                 df = provider_func(symbol, days)
                 if df is not None and len(df) > 0:
                     self.cache[cache_key] = df
+                    print(f"  ✓ Got data from {provider_name}")
                     return df
             except requests.exceptions.HTTPError as e:
                 if e.response.status_code == 429:
                     print(f"  Rate limit hit on {provider_name}, trying next provider...")
                     self.failed_providers.add(provider_name)
                     continue
+                else:
+                    # Other HTTP error, try next provider
+                    continue
             except Exception as e:
-                # Try next provider
+                # Try next provider silently
                 continue
         
         print(f"Error: Could not fetch data for {symbol} from any provider")
@@ -136,14 +140,21 @@ class MarketDataProvider:
     
     def _get_historical_from_coincap(self, symbol: str, days: int) -> Optional[pd.DataFrame]:
         """Get historical data from CoinCap API."""
-        # CoinCap uses lowercase ids
-        coin_id = symbol.lower()
-        
-        # Special mappings for CoinCap
+        # CoinCap uses specific IDs
         coincap_mapping = {
-            'xrp': 'ripple',
+            'BTC': 'bitcoin',
+            'ETH': 'ethereum',
+            'XRP': 'ripple',
+            'SOL': 'solana',
+            'ADA': 'cardano',
+            'DOGE': 'dogecoin',
+            'AVAX': 'avalanche',
+            'MATIC': 'polygon',
+            'LINK': 'chainlink',
+            'UNI': 'uniswap',
+            'AAVE': 'aave',
         }
-        coin_id = coincap_mapping.get(coin_id, coin_id)
+        coin_id = coincap_mapping.get(symbol.upper(), symbol.lower())
         
         end_time = int(time.time() * 1000)
         start_time = end_time - (days * 24 * 60 * 60 * 1000)
@@ -254,9 +265,20 @@ class MarketDataProvider:
         """
         # Try CoinCap first (better rate limits)
         try:
-            coin_id = symbol.lower()
-            coincap_mapping = {'xrp': 'ripple'}
-            coin_id = coincap_mapping.get(coin_id, coin_id)
+            coincap_mapping = {
+                'BTC': 'bitcoin',
+                'ETH': 'ethereum',
+                'XRP': 'ripple',
+                'SOL': 'solana',
+                'ADA': 'cardano',
+                'DOGE': 'dogecoin',
+                'AVAX': 'avalanche',
+                'MATIC': 'polygon',
+                'LINK': 'chainlink',
+                'UNI': 'uniswap',
+                'AAVE': 'aave',
+            }
+            coin_id = coincap_mapping.get(symbol.upper(), symbol.lower())
             
             url = f"{self.coincap_base}/assets/{coin_id}"
             response = requests.get(url, timeout=10)
